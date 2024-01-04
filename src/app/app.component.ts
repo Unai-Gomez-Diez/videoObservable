@@ -1,14 +1,23 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { catchError, Observable } from 'rxjs';
+import { Interfaces } from './interfaces';
+import { PostsService } from './posts.service';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'videoObservable';
+  title = "video"
+  public hasError: boolean = false;
+  public post$!: Observable<Interfaces>;
+  constructor(private postService: PostsService) {
+    this.post$ = this.postService.getPost().pipe(
+      catchError(error => {
+        console.error(error);
+        this.hasError = true;
+        return [];
+      }))
+  }
 }
